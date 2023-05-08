@@ -59,11 +59,14 @@ class DivineComment(models.Model):
 class DivineCart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    def __str__(self):
+        return str(self.id)
+    
 class DivineCartItem(models.Model):
     cart = models.ForeignKey(DivineCart, on_delete=models.CASCADE)
     software = models.ForeignKey(DivineSoftware, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
+    def __str__(self):
+        return str(self.id)

@@ -7,4 +7,5 @@ urlpatterns = [
     path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
     path('addfavorite/<int:pk>/', AddFavorite.as_view(), name='addfavorite'),
     path('listfavorite/', ListFavorite.as_view(), name='list_favorite'),
+
 ]

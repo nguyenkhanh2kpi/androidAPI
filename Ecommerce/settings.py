@@ -10,6 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+## tự code
+import os
+
+# set the idle timeout to 10 days (in seconds)
+IDLE_TIMEOUT = 864000
+
+# get the DATABASE_URL from environment variables
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
+
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

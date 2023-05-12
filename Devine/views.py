@@ -102,6 +102,27 @@ class DivineCartView(APIView):
         return Response(serializer.data)
 
 
+#lay chi tiet hoa don
+class DivineOrderView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = DivineOrderDetailSerializer
+
+    def get(self, request, order_id):
+        try:
+            order = DivineOrderDetail.objects.filter(order_id=order_id)
+            serializer = self.serializer_class(order, many=True)
+            return Response({
+                'status': 'success',
+                'message': 'Order details retrieved successfully.',
+                'data': serializer.data,
+            })
+        except DivineOrderDetail.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'The order does not exist',
+            }, status=status.HTTP_404_NOT_FOUND)
+
+
 # loại bỏ 1 sản phẩm
 class SubCart(APIView):
     permission_classes = [IsAuthenticated]
@@ -133,74 +154,37 @@ class SubCart(APIView):
 ## hàm order
 class Order(APIView):
     permission_classes = [IsAuthenticated]
-
     @transaction.atomic
     def post(self, request):
         user = request.user
-
         # Lấy cart
         cart = get_object_or_404(DivineCart, user=user)
-
         # Tạo đơn hàng
         order = DivineOrder.objects.create(user=user, status='Pending')
-
-        # # Tạo các OrderDetail từ các cartItem của người dùng
-        # for cart_item in cart.divinecartitem_set.all():
-        #     # Kiểm tra xem cartItem có thuộc về cart không
-        #     if cart_item.cart == cart:
-        #         # Lấy key từ phần mềm thuộc cart item
-        #         software = cart_item.software
-        #         key = DivineKey.objects.filter(software=software, is_used=False).first()
-
-        #         if key is None:
-        #             # Nếu không còn key sẵn có, trả về lỗi
-        #             return Response({
-        #                 'status': 'error',
-        #                 'message': f'Out of keys for {software.name}.',
-        #             }, status=status.HTTP_400_BAD_REQUEST)
-
-        #         order_detail = DivineOrderDetail.objects.create(
-        #             order=order,
-        #             key=key,
-        #             quantity=cart_item.quantity,
-        #         )
-
-        #         # Đánh dấu key là đã sử dụng
-        #         key.is_used = True
-        #         key.save()
-
-        #         # Xóa cartItem
-        #         cart_item.delete()
-        #         # Tạo các OrderDetail từ các cartItem của người dùng
+        # Tạo các OrderDetail từ các cartItem của người dùng
         for cart_item in cart.divinecartitem_set.all():
             # Kiểm tra xem cartItem có thuộc về cart không
             if cart_item.cart == cart:
                 # Lấy key từ phần mềm thuộc cart item
                 software = cart_item.software
                 keys = DivineKey.objects.filter(software=software, is_used=False)[:cart_item.quantity]
-
                 if len(keys) < cart_item.quantity:
                     # Nếu không đủ key, trả về lỗi
                     return Response({
                         'status': 'error',
                         'message': f'Not enough keys for {software.name}.',
                     }, status=status.HTTP_400_BAD_REQUEST)
-
                 for key in keys:
                     order_detail = DivineOrderDetail.objects.create(
                         order=order,
                         key=key,
                         quantity=1,
                     )
-
                     # Đánh dấu key là đã sử dụng
                     key.is_used = True
                     key.save()
-
                 # Xóa cartItem
                 cart_item.delete()
-
-
         # Trả về thông tin đơn hàng
         return Response({
             'status': 'success',

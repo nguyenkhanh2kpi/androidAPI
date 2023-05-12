@@ -15,6 +15,7 @@ urlpatterns = [
     path('cart/', DivineCartView.as_view(), name='cart'),
     path('cart/sub/<int:pk>/', SubCart.as_view(), name='sub-from-cart'),
     path('order/', Order.as_view(), name='order'),
+    path('orders/<int:order_id>/', DivineOrderView.as_view(), name='order-details'),
     path('purchased-keys/', PurchasedKeys.as_view(), name='purchased-keys')
 
 ]

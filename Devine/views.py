@@ -102,6 +102,18 @@ class DivineCartView(APIView):
         return Response(serializer.data)
 
 
+#xem danh sach hoa don da mua
+class DivineOrderPurchased(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = DivineOrderSerializer
+
+    def get(self, request):
+        user = request.user
+        order = DivineOrder.objects.filter(user=user)
+        serializer = self.serializer_class(order, many=True)
+        return Response(serializer.data)
+
+
 #lay chi tiet hoa don
 class DivineOrderView(APIView):
     permission_classes = [IsAuthenticated]

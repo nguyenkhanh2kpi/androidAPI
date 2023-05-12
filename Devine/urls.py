@@ -14,8 +14,8 @@ urlpatterns = [
     path('cart/add/<int:pk>/', AddCart.as_view(), name='add-to-cart'),
     path('cart/', DivineCartView.as_view(), name='cart'),
     path('cart/sub/<int:pk>/', SubCart.as_view(), name='sub-from-cart'),
+    path('order/list/', DivineOrderPurchased.as_view(), name='order-list'),
     path('order/', Order.as_view(), name='order'),
     path('orders/<int:order_id>/', DivineOrderView.as_view(), name='order-details'),
     path('purchased-keys/', PurchasedKeys.as_view(), name='purchased-keys')
-
 ]

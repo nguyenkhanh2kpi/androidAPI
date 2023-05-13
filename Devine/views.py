@@ -125,6 +125,7 @@ class DivineOrderView(APIView):
             serializer = self.serializer_class(order, many=True)
             return Response({
                 'status': 'success',
+                'order_id':order_id,
                 'message': 'Order details retrieved successfully.',
                 'data': serializer.data,
             })
